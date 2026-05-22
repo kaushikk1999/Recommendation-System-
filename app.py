@@ -1,9 +1,9 @@
 """
 AI Product Recommendation Studio
-A production-ready product recommendation system powered by Google Gemini AI.
+A production-ready product recommendation system powered by Ollama AI.
 
 Features:
-- AI-powered recommendations via Google Gemini API
+- AI-powered recommendations via Ollama API
 - Smart fallback engine when AI unavailable
 - Rate limiting and caching
 - Input validation and sanitization
@@ -241,7 +241,7 @@ def main():
         <div class="info-box">
             <h3 style="color: #a5b4fc; margin-top: 0;">🔮 AI-Powered Recommendations</h3>
             <p style="color: #e2e8f0;">
-                This system uses the Google Gemini AI API to understand your 
+                This system uses the Ollama AI API with Gemma model to understand your 
                 natural language preferences and match them with products from our catalog.
             </p>
             
@@ -292,7 +292,7 @@ def main():
         <div class="info-box">
             <h4 style="color: #a5b4fc; margin-top: 0;">🔧 Configuration</h4>
             <p style="color: #e2e8f0;">
-                <strong>API Provider:</strong> <code>Google Gemini</code><br>
+                <strong>API Provider:</strong> <code>Ollama</code><br>
                 <strong>Model:</strong> <code>{API_CONFIG.model}</code><br>
                 <strong>Timeout:</strong> {API_CONFIG.timeout} seconds
             </p>
@@ -300,9 +300,9 @@ def main():
             <h4 style="color: #a5b4fc; margin-top: 1.5rem;">📋 Setup Instructions</h4>
             <p style="color: #e2e8f0;">To enable AI recommendations:</p>
             <ol style="color: #cbd5e1;">
-                <li>Get your API key from <a href="https://makersuite.google.com/app/apikey" style="color: #a5b4fc;">Google AI Studio</a></li>
+                <li>Get your API key from <a href="https://ollama.com" style="color: #a5b4fc;">Ollama</a></li>
                 <li>Create <code>.streamlit/secrets.toml</code> file</li>
-                <li>Add: <code>GEMINI_API_KEY = "your-api-key"</code></li>
+                <li>Add: <code>OLLAMA_API_KEY = "your-api-key"</code></li>
                 <li>Restart the application</li>
             </ol>
             
@@ -334,7 +334,7 @@ def main():
     st.markdown("""
     <div style="text-align: center; padding: 2rem; margin-top: 3rem; border-top: 1px solid rgba(102, 126, 234, 0.2);">
         <p style="color: #64748b; font-size: 0.85rem;">
-            Built with ❤️ using Streamlit • Powered by Google Gemini AI
+            Built with ❤️ using Streamlit • Powered by Ollama AI
         </p>
     </div>
     """, unsafe_allow_html=True)

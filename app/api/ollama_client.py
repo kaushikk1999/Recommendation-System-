@@ -1,13 +1,12 @@
 """
-Gemini API Client
-Production-ready API client for Google's Gemini AI.
+Ollama API Client
+Production-ready API client for Ollama with Gemma model.
 """
 
 import json
 import logging
+import requests
 from typing import Optional
-
-import google.generativeai as genai
 
 from app.config import API_CONFIG, get_api_key
 from app.api.schemas import RecommendationResponse, RecommendationItem
@@ -15,8 +14,8 @@ from app.api.schemas import RecommendationResponse, RecommendationItem
 logger = logging.getLogger(__name__)
 
 
-class GeminiAPIError(Exception):
-    """Custom exception for Gemini API errors."""
+class OllamaAPIError(Exception):
+    """Custom exception for Ollama API errors."""
     def __init__(self, message: str, status_code: Optional[int] = None):
         self.message = message
         self.status_code = status_code
@@ -24,7 +23,7 @@ class GeminiAPIError(Exception):
 
 
 def build_prompt(user_query: str, products: list[dict]) -> str:
-    """Build the complete prompt for Gemini."""
+    """Build the complete prompt for Ollama."""
     
     # Build product catalog
     catalog_lines = []
@@ -61,9 +60,9 @@ Analyze the user's request and recommend the best matching products. Return ONLY
     return prompt
 
 
-def call_gemini_api(user_query: str, products: list[dict]) -> RecommendationResponse:
+def call_ollama_api(user_query: str, products: list[dict]) -> RecommendationResponse:
     """
-    Call the Gemini API to get AI-powered recommendations.
+    Call the Ollama API to get AI-powered recommendations.
     
     Args:
         user_query: The user's natural language query
@@ -73,35 +72,58 @@ def call_gemini_api(user_query: str, products: list[dict]) -> RecommendationResp
         RecommendationResponse with AI recommendations
         
     Raises:
-        GeminiAPIError: If API call fails
+        OllamaAPIError: If API call fails
     """
     api_key = get_api_key()
     if not api_key:
-        raise GeminiAPIError("API key not configured")
+        raise OllamaAPIError("API key not configured")
     
     try:
-        # Configure Gemini
-        genai.configure(api_key=api_key)
-        
-        # Create model
-        model = genai.GenerativeModel(API_CONFIG.model)
-        
         # Build prompt
         prompt = build_prompt(user_query, products)
         
-        logger.info(f"Calling Gemini API with query: {user_query[:50]}...")
+        logger.info(f"Calling Ollama API with query: {user_query[:50]}...")
         
-        # Generate response
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.3,
-                max_output_tokens=1024,
-            )
+        # Prepare request
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        payload = {
+            "model": API_CONFIG.model,
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
+            "stream": False
+        }
+        
+        # Make request
+        response = requests.post(
+            API_CONFIG.base_url,
+            headers=headers,
+            json=payload,
+            timeout=API_CONFIG.timeout
         )
         
-        # Extract text
-        content = response.text.strip()
+        if response.status_code != 200:
+            logger.error(f"API returned status {response.status_code}: {response.text[:200]}")
+            raise OllamaAPIError(
+                f"API request failed with status {response.status_code}",
+                status_code=response.status_code
+            )
+        
+        result = response.json()
+        
+        # Extract content from response
+        if "choices" in result and len(result["choices"]) > 0:
+            content = result["choices"][0]["message"]["content"]
+        elif "message" in result and "content" in result["message"]:
+            content = result["message"]["content"]
+        else:
+            raise OllamaAPIError("Unexpected API response structure")
+        
+        content = content.strip()
         
         # Clean up response (remove markdown code blocks if present)
         if content.startswith("```"):
@@ -127,7 +149,7 @@ def call_gemini_api(user_query: str, products: list[dict]) -> RecommendationResp
                 logger.warning(f"Skipping invalid recommendation: {e}")
                 continue
         
-        logger.info(f"Gemini returned {len(recommendations)} recommendations")
+        logger.info(f"Ollama returned {len(recommendations)} recommendations")
         
         return RecommendationResponse(
             recommendations=recommendations,
@@ -135,14 +157,20 @@ def call_gemini_api(user_query: str, products: list[dict]) -> RecommendationResp
             source="ai"
         )
         
+    except requests.exceptions.Timeout:
+        logger.error("API request timed out")
+        raise OllamaAPIError("Request timed out")
+    except requests.exceptions.ConnectionError:
+        logger.error("API connection error")
+        raise OllamaAPIError("Connection error")
     except json.JSONDecodeError as e:
         logger.error(f"Invalid JSON response: {e}")
-        raise GeminiAPIError("Invalid JSON response from API")
+        raise OllamaAPIError("Invalid JSON response from API")
     except Exception as e:
-        logger.error(f"Gemini API error: {e}")
-        raise GeminiAPIError(str(e))
+        logger.error(f"Ollama API error: {e}")
+        raise OllamaAPIError(str(e))
 
 
-# Alias for backward compatibility
-OllamaAPIError = GeminiAPIError
-call_ollama_api = call_gemini_api
+# Alias for compatibility
+GeminiAPIError = OllamaAPIError
+call_gemini_api = call_ollama_api

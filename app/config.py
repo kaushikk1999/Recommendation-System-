@@ -11,9 +11,10 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class APIConfig:
-    """Gemini API configuration."""
-    model: str = "gemini-pro"
-    timeout: int = 30
+    """Ollama API configuration."""
+    base_url: str = "https://api.ollama.com/v1/chat/completions"
+    model: str = "gemma3:27b"
+    timeout: int = 60
     max_retries: int = 3
     retry_backoff: float = 0.5
 
@@ -54,14 +55,14 @@ def get_api_key() -> Optional[str]:
     """
     # Try Streamlit secrets first
     try:
-        key = st.secrets.get("GEMINI_API_KEY")
+        key = st.secrets.get("OLLAMA_API_KEY")
         if key:
             return key
     except Exception:
         pass
     
     # Fallback to environment variable
-    return os.getenv("GEMINI_API_KEY")
+    return os.getenv("OLLAMA_API_KEY")
 
 
 def is_api_configured() -> bool:
