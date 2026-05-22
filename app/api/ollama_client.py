@@ -62,7 +62,7 @@ Analyze the user's request and recommend the best matching products. Return ONLY
 
 def call_ollama_api(user_query: str, products: list[dict]) -> RecommendationResponse:
     """
-    Call the local Ollama API to get AI-powered recommendations.
+    Call the Ollama Cloud API to get AI-powered recommendations.
     
     Args:
         user_query: The user's natural language query
@@ -74,14 +74,19 @@ def call_ollama_api(user_query: str, products: list[dict]) -> RecommendationResp
     Raises:
         OllamaAPIError: If API call fails
     """
+    api_key = get_api_key()
+    if not api_key:
+        raise OllamaAPIError("API key not configured")
+    
     try:
         # Build prompt
         prompt = build_prompt(user_query, products)
         
         logger.info(f"Calling Ollama API with query: {user_query[:50]}...")
         
-        # Prepare request (no auth needed for local Ollama)
+        # Prepare request with Bearer token
         headers = {
+            "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json"
         }
         

@@ -11,9 +11,9 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class APIConfig:
-    """Ollama API configuration (local)."""
-    base_url: str = "http://localhost:11434/api/chat"
-    model: str = "gemma2"
+    """Ollama Cloud API configuration."""
+    base_url: str = "https://api.ollama.com/v1/chat/completions"
+    model: str = "gemma3:27b"
     timeout: int = 120
     max_retries: int = 3
     retry_backoff: float = 0.5
@@ -66,6 +66,5 @@ def get_api_key() -> Optional[str]:
 
 
 def is_api_configured() -> bool:
-    """Check if Ollama is available (local doesn't need API key)."""
-    # Local Ollama doesn't require API key
-    return True
+    """Check if API key is configured."""
+    return bool(get_api_key())
