@@ -12,7 +12,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class APIConfig:
     """Gemini API configuration."""
-    model: str = "gemini-1.5-flash"
+    model: str = "gemini-pro"
     timeout: int = 30
     max_retries: int = 3
     retry_backoff: float = 0.5
