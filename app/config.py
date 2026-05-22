@@ -11,9 +11,8 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class APIConfig:
-    """Ollama API configuration."""
-    base_url: str = "https://ollama.com/api/chat"
-    model: str = "deepseek-v4-pro"
+    """Gemini API configuration."""
+    model: str = "gemini-1.5-flash"
     timeout: int = 30
     max_retries: int = 3
     retry_backoff: float = 0.5
@@ -55,14 +54,14 @@ def get_api_key() -> Optional[str]:
     """
     # Try Streamlit secrets first
     try:
-        key = st.secrets.get("OLLAMA_API_KEY")
+        key = st.secrets.get("GEMINI_API_KEY")
         if key:
             return key
     except Exception:
         pass
     
     # Fallback to environment variable
-    return os.getenv("OLLAMA_API_KEY")
+    return os.getenv("GEMINI_API_KEY")
 
 
 def is_api_configured() -> bool:

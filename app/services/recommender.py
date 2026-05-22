@@ -11,7 +11,7 @@ from typing import Optional
 
 from app.config import get_api_key, CACHE_CONFIG
 from app.api.schemas import RecommendationResponse, UserQuery
-from app.api.ollama_client import call_ollama_api, OllamaAPIError
+from app.api.gemini_client import call_gemini_api as call_ollama_api, GeminiAPIError as OllamaAPIError
 from app.services.fallback import fallback_recommend
 from app.data.products import get_all_products
 

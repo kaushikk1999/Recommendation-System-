@@ -132,7 +132,7 @@ def render_hero_section():
         <div class="blob blob-2"></div>
         <h1 class="hero-title">🛍️ AI Product Recommendation Studio</h1>
         <p class="hero-subtitle">
-            Find the perfect product using natural-language preferences powered by Ollama AI
+            Find the perfect product using natural-language preferences powered by Google Gemini AI
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -174,7 +174,7 @@ def render_source_badge(source: str):
         st.markdown("""
         <div class="status-badge status-ai">
             <span>🤖</span>
-            <span>Powered by Ollama AI</span>
+            <span>Powered by Gemini AI</span>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -231,14 +231,14 @@ def render_api_status(is_configured: bool):
         st.markdown("""
         <div class="message-box message-success">
             <span>✅</span>
-            <span><strong>API Connected:</strong> Ollama API key is configured. AI recommendations are active.</span>
+            <span><strong>API Connected:</strong> Gemini API key is configured. AI recommendations are active.</span>
         </div>
         """, unsafe_allow_html=True)
     else:
         st.markdown("""
         <div class="message-box message-warning">
             <span>⚠️</span>
-            <span><strong>API Not Configured:</strong> Using smart fallback engine. Add OLLAMA_API_KEY to enable AI recommendations.</span>
+            <span><strong>API Not Configured:</strong> Using smart fallback engine. Add GEMINI_API_KEY to enable AI recommendations.</span>
         </div>
         """, unsafe_allow_html=True)
 

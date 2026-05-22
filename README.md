@@ -1,6 +1,6 @@
 # 🛍️ AI Product Recommendation Studio
 
-A state-of-the-art AI-powered product recommendation system built with Streamlit and powered by the Ollama AI API.
+A state-of-the-art AI-powered product recommendation system built with Streamlit and powered by Google Gemini AI.
 
 ![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red.svg)
@@ -8,7 +8,7 @@ A state-of-the-art AI-powered product recommendation system built with Streamlit
 
 ## ✨ Features
 
-- **🤖 AI-Powered Recommendations**: Natural language product search using Ollama's DeepSeek V4 Pro model
+- **🤖 AI-Powered Recommendations**: Natural language product search using Google Gemini 1.5 Flash model
 - **⚡ Smart Fallback Engine**: Deterministic recommendation system when AI is unavailable
 - **🎨 Modern UI**: Premium dark theme with animations, glassmorphism, and responsive design
 - **📦 Rich Product Catalog**: 18+ products across 6 categories (Phones, Laptops, Headphones, Smartwatches, Tablets, Accessories)
@@ -53,7 +53,7 @@ The application features:
 4. **Configure API key** (optional - fallback engine works without it)
    ```bash
    cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-   # Edit .streamlit/secrets.toml with your real Ollama API key
+   # Edit .streamlit/secrets.toml with your Gemini API key from https://makersuite.google.com/app/apikey
    ```
 
 5. **Run the application**
@@ -70,13 +70,15 @@ The application features:
 
 Create `.streamlit/secrets.toml`:
 ```toml
-OLLAMA_API_KEY = "your-actual-api-key"
+GEMINI_API_KEY = "your-gemini-api-key"
 ```
+
+Get your free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
 ### Option 2: Environment Variable
 
 ```bash
-export OLLAMA_API_KEY="your-actual-api-key"
+export GEMINI_API_KEY="your-gemini-api-key"
 ```
 
 ### Without API Key
@@ -105,7 +107,7 @@ The application works without an API key using the smart fallback recommendation
    - Navigate to "Secrets"
    - Add:
      ```toml
-     OLLAMA_API_KEY = "your-actual-api-key"
+     GEMINI_API_KEY = "your-gemini-api-key"
      ```
 
 ## 📁 Project Structure
@@ -127,35 +129,23 @@ Recommendation system/
 |-----------|------------|
 | Frontend | Streamlit |
 | Backend | Python 3.9+ |
-| AI API | Ollama (DeepSeek V4 Pro) |
-| HTTP Client | Requests |
+| AI API | Google Gemini 1.5 Flash |
+| SDK | google-generativeai |
 | Styling | Custom CSS with animations |
 
-## 🔌 Ollama API Integration
+## 🔌 Google Gemini API Integration
 
-### Endpoint
-```
-POST https://ollama.com/api/chat
-```
+### SDK Usage
+```python
+import google.generativeai as genai
 
-### Request Format
-```json
-{
-  "model": "deepseek-v4-pro",
-  "stream": false,
-  "format": "json",
-  "messages": [
-    {"role": "system", "content": "..."},
-    {"role": "user", "content": "..."}
-  ]
-}
+genai.configure(api_key="your-api-key")
+model = genai.GenerativeModel("gemini-1.5-flash")
+response = model.generate_content(prompt)
 ```
 
-### Headers
-```
-Authorization: Bearer <OLLAMA_API_KEY>
-Content-Type: application/json
-```
+### Model
+- **gemini-1.5-flash**: Fast, efficient model for production use (free tier available)
 
 ### Response Schema
 ```json
@@ -175,7 +165,7 @@ Content-Type: application/json
 
 | Criterion | Implementation |
 |-----------|----------------|
-| AI API Integration | Ollama API with DeepSeek V4 Pro model |
+| AI API Integration | Google Gemini API with gemini-1.5-flash model |
 | Product Display | Rich product cards with specs, ratings, categories |
 | User Input | Natural language text input with optional filters |
 | Recommendations | AI-powered with structured JSON output |
@@ -222,10 +212,10 @@ Try these natural language queries:
 
 ## ⚠️ Known Limitations
 
-1. **API Availability**: Requires valid Ollama API key for AI recommendations
+1. **API Availability**: Requires valid Gemini API key for AI recommendations (free tier available)
 2. **Static Catalog**: Product data is built-in, not from external database
 3. **No Persistence**: User preferences are not saved between sessions
-4. **Single Model**: Uses only DeepSeek V4 Pro model
+4. **Rate Limits**: Free tier has request limits
 
 ## 🤝 Contributing
 
@@ -241,5 +231,5 @@ This project is licensed under the MIT License.
 ## 🙏 Acknowledgments
 
 - [Streamlit](https://streamlit.io) for the amazing framework
-- [Ollama](https://ollama.com) for the AI API
+- [Google Gemini](https://ai.google.dev/) for the AI API
 - Built for demonstration and evaluation purposes
